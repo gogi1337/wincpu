@@ -1,41 +1,38 @@
 # Compiler settings
 CC = gcc
-CFLAGS = -Wall -O2
-
-# Target executable name
-TARGET = wincpu.exe
-
-# Source files
-SOURCES = main.c
+CFLAGS = -Wall -Wextra
+LDFLAGS = -lole32 -loleaut32 -lwbemuuid
+EXECUTABLE = wincpu.exe
 
 # Object files
-OBJECTS = $(SOURCES:.c=.o)
-
-# Libraries
-LIBS = -lpowrprof
+OBJS = main.o hwid.o
 
 # Default target
-all: $(TARGET)
+all: $(EXECUTABLE)
 
-# Link the program
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(TARGET) $(LIBS)
+# Link object files into executable
+$(EXECUTABLE): $(OBJS)
+	$(CC) $(OBJS) -o $(EXECUTABLE) $(LDFLAGS)
 
-# Compile source files
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Compile main.c
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c
 
-# Clean build files
+# Compile hwid.c
+hwid.o: hwid.c
+	$(CC) $(CFLAGS) -c hwid.c
+
+# Clean target to remove executable and object files
 clean:
-	del /F /Q $(TARGET) *.o
+	del $(EXECUTABLE) *.o
 
 # Run the program
-run: $(TARGET)
-	./$(TARGET)
+run: $(EXECUTABLE)
+	.\$(EXECUTABLE)
 
 # Run the program in cycle mode
-run-cycle: $(TARGET)
-	./$(TARGET) -c
+run-cycle: $(EXECUTABLE)
+	./$(EXECUTABLE) -c
 
 # Help target
 help:

@@ -6,6 +6,7 @@
 #include <powrprof.h>
 #include <intrin.h>
 #include <string.h>
+#include "hwid.h"
 
 #pragma comment(lib, "powrprof.lib")
 
@@ -278,6 +279,9 @@ int main(int argc, char *argv[]) {
             cycleMode = TRUE;
         } else if (strcmp(argv[i], "-h") == 0) {
             printUsage();
+            return 0;
+        } else if (strcmp(argv[i], "-hwid") == 0) {
+            get_hwid();
             return 0;
         } else {
             printf("Unknown option: %s\n", argv[i]);
