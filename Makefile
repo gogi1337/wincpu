@@ -4,35 +4,43 @@ CFLAGS = -Wall -Wextra
 LDFLAGS = -lole32 -loleaut32 -lwbemuuid
 EXECUTABLE = wincpu.exe
 
-# Object files
-OBJS = main.o hwid.o
+# Directory settings
+SRCDIR = src
+BUILDDIR = build
+
+# Object files (with build directory prefix)
+OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/hwid.o
 
 # Default target
-all: $(EXECUTABLE)
+all: $(BUILDDIR) $(BUILDDIR)/$(EXECUTABLE)
+
+# Create build directory
+$(BUILDDIR):
+	mkdir $(BUILDDIR)
 
 # Link object files into executable
-$(EXECUTABLE): $(OBJS)
-	$(CC) $(OBJS) -o $(EXECUTABLE) $(LDFLAGS)
+$(BUILDDIR)/$(EXECUTABLE): $(OBJS)
+	$(CC) $(OBJS) -o $(BUILDDIR)/$(EXECUTABLE) $(LDFLAGS)
 
 # Compile main.c
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c
+$(BUILDDIR)/main.o: $(SRCDIR)/main.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile hwid.c
-hwid.o: hwid.c
-	$(CC) $(CFLAGS) -c hwid.c
+$(BUILDDIR)/hwid.o: $(SRCDIR)/hwid.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean target to remove executable and object files
+# Clean target to remove build directory
 clean:
-	del $(EXECUTABLE) *.o
+	rmdir /s /q $(BUILDDIR)
 
 # Run the program
-run: $(EXECUTABLE)
-	.\$(EXECUTABLE)
+run: $(BUILDDIR)/$(EXECUTABLE)
+	.\$(BUILDDIR)\$(EXECUTABLE)
 
 # Run the program in cycle mode
-run-cycle: $(EXECUTABLE)
-	./$(EXECUTABLE) -c
+run-cycle: $(BUILDDIR)/$(EXECUTABLE)
+	./$(BUILDDIR)/$(EXECUTABLE) -c
 
 # Help target
 help:
